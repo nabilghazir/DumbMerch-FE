@@ -1,19 +1,16 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
+import { CartEntity } from "../../entities/cart-entities";
 import { api } from "../../libs/api";
-import { CategoryFormData } from "../../schema/category-schema";
-import { toast } from "react-toastify";
+import { AddProductToCartDTO, UpdateProductQuantityDTO } from "../../entities/cart-dto";
 import { AxiosError } from "axios";
+import { toast } from "react-toastify";
 
-
-export const getAllCategory = createAsyncThunk(
-    "category/getAllCategory",
-    async (_, ThunkAPI) => {
+export const fetchCart = createAsyncThunk<CartEntity, number>(
+    'cart/fetchCart',
+    async (userId, ThunkAPI) => {
         try {
-            const res = await api.get("/category/getallcategory")
-
-            console.log("Profile Data : ", res.data);
-
-            return res.data
+            const response = await api.get(`/api/cart/user/${userId}`);
+            return response.data;
         } catch (error) {
             console.log(error);
             if (error instanceof AxiosError && error.response) {
@@ -25,15 +22,14 @@ export const getAllCategory = createAsyncThunk(
             }
         }
     }
-)
+);
 
-export const createCategory = createAsyncThunk<void, CategoryFormData>(
-    "product/createCategory",
-    async (data, ThunkAPI) => {
+export const addProductToCart = createAsyncThunk<CartEntity, AddProductToCartDTO>(
+    'cart/addProductToCart',
+    async (productData, ThunkAPI) => {
         try {
-            const res = await api.post("/category/create", data);
-            console.log("Profile Data : ", res.data);
-
+            const response = await api.post(`/api/cart/add`, productData);
+            return response.data;
         } catch (error) {
             console.log(error);
             if (error instanceof AxiosError && error.response) {
@@ -45,15 +41,14 @@ export const createCategory = createAsyncThunk<void, CategoryFormData>(
             }
         }
     }
-)
+);
 
-export const updateCategory = createAsyncThunk<void, { data: CategoryFormData; categoryId: number }>(
-    "product/updateCategory",
-    async ({ data, categoryId }, ThunkAPI) => {
+export const updateProductQuantity = createAsyncThunk<CartEntity, UpdateProductQuantityDTO>(
+    'cart/updateProductQuantity',
+    async (updateData, ThunkAPI) => {
         try {
-            const res = await api.put(`/category/update/${categoryId}`, data);
-            console.log("Profile Data : ", res.data);
-
+            const response = await api.put(`/api/cart/update`, updateData);
+            return response.data;
         } catch (error) {
             console.log(error);
             if (error instanceof AxiosError && error.response) {
@@ -65,15 +60,14 @@ export const updateCategory = createAsyncThunk<void, { data: CategoryFormData; c
             }
         }
     }
-)
+);
 
-export const deleteCategory = createAsyncThunk<void, number>(
-    "product/deleteCategory",
-    async (categoryId, ThunkAPI) => {
+export const clearCart = createAsyncThunk<CartEntity, number>(
+    'cart/clearCart',
+    async (cartId, ThunkAPI) => {
         try {
-            const res = await api.delete(`/category/delete/${categoryId}`);
-            console.log("Profile Data : ", res.data);
-
+            const response = await api.delete(`/api/cart/clear/${cartId}`);
+            return response.data;
         } catch (error) {
             console.log(error);
             if (error instanceof AxiosError && error.response) {
@@ -85,4 +79,4 @@ export const deleteCategory = createAsyncThunk<void, number>(
             }
         }
     }
-)
+);

@@ -4,6 +4,8 @@ import { useDispatch, useSelector } from "react-redux";
 import authReducer from "./auth/auth-slice";
 import profileReducer from "./profile/profile-slice"
 import categoryReducer from "./category/category-slice"
+import productReducer from "./product/product-slice"
+import cartReducer from "./cart/cart-slice"
 
 
 
@@ -11,7 +13,9 @@ const store = configureStore({
     reducer: {
         auth: authReducer,
         profile: profileReducer,
-        category: categoryReducer
+        category: categoryReducer,
+        product: productReducer,
+        cart: cartReducer,
     },
 });
 

@@ -1,5 +1,6 @@
-import { Stack } from "@mui/material"
-import { AdminCategoryTable } from "../../component/admin/admin-category-table"
+import { Stack, Typography } from "@mui/material"
+import { AdminCategoryTable } from "../../component/admin/admin-category/admin-category-table"
+import { CreateCategoryModal } from "../../component/admin/admin-category/admin-create-categories/admin-create-category"
 
 
 export const AdminCategory = () => {
@@ -8,11 +9,25 @@ export const AdminCategory = () => {
     return (
         <Stack
             sx={{
-                width: "100%",
+                width: "80%",
                 height: "100%",
                 marginLeft: "160px",
-                marginTop: "75px",
+                marginTop: "150px",
             }}>
+            <Stack
+                sx={{
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    flexDirection: "row",
+                    width: "100%",
+                    padding: "20px"
+                }}>
+                <Typography
+                    variant="h3">
+                    Category
+                </Typography>
+                <CreateCategoryModal />
+            </Stack>
             <Stack>
                 <AdminCategoryTable />
             </Stack>

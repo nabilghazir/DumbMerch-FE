@@ -44,7 +44,6 @@ export const ProfileEditForm: React.FC<ProfileEditFormProps> = ({ handleClose })
             });
             console.log('Profile updated successfully', response.data);
 
-            // Close the modal on successful update
             handleClose();
         } catch (error) {
             console.error('Failed to update profile', error);

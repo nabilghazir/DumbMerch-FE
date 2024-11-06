@@ -5,6 +5,7 @@ import { useAppDispatch, useAppSelector } from "../../../store/store";
 import customTheme from "../../../theme/theme";
 import { ProductEntities } from "../../../entities/product-entitities";
 import { EditProductModal } from "./product-edit/edit-product-modal";
+import { toast } from "react-toastify";
 
 export const AdminProductTable = () => {
     const dispatch = useAppDispatch();
@@ -46,8 +47,16 @@ export const AdminProductTable = () => {
         dispatch(getAllProduct());
     }, [dispatch]);
 
-    const handleDelete = (productId: number) => {
-        dispatch(deleteProduct(productId));
+    const handleDelete = async (productId: number) => {
+        const confirmation = window.confirm("Are you sure you want to delete this product?");
+        if (confirmation) {
+            try {
+                await dispatch(deleteProduct(productId)).unwrap();
+                toast.success("Product deleted successfully!");
+            } catch (error) {
+                toast.error("Failed to delete product.");
+            }
+        }
     };
 
     const formatCurrency = (value: number) => {
@@ -61,14 +70,7 @@ export const AdminProductTable = () => {
 
     return (
         <>
-            <TableContainer
-                component={Paper}
-                sx={{
-                    width: "100%",
-                    height: "100%",
-                    justifyContent: "center",
-                    alignItems: "center",
-                }}>
+            <TableContainer component={Paper} sx={{ width: "100%", height: "100%" }}>
                 <Table sx={{ minWidth: 700 }} aria-label="customized table">
                     <TableHead>
                         <TableRow>
@@ -94,20 +96,14 @@ export const AdminProductTable = () => {
                                 <StyledTableCell>
                                     <Button
                                         onClick={() => handleOpenEditModal(product)}
-                                        sx={{
-                                            backgroundColor: customTheme.palette.success.main,
-                                            color: customTheme.palette.common.white,
-                                        }}>
+                                        sx={{ backgroundColor: customTheme.palette.success.main, color: customTheme.palette.common.white }}>
                                         Edit
                                     </Button>
                                 </StyledTableCell>
                                 <StyledTableCell>
                                     <Button
                                         onClick={() => handleDelete(product.id)}
-                                        sx={{
-                                            backgroundColor: customTheme.palette.error.main,
-                                            color: customTheme.palette.common.white,
-                                        }}>
+                                        sx={{ backgroundColor: customTheme.palette.error.main, color: customTheme.palette.common.white }}>
                                         Delete
                                     </Button>
                                 </StyledTableCell>

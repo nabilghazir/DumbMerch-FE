@@ -1,6 +1,31 @@
+import { Stack, Typography } from "@mui/material"
+import { CartItems } from "../../component/cart/cart-items"
 
 export const Cart = () => {
     return (
-        <div>Cart</div>
+        <Stack
+            sx={{
+                width: "100%",
+                height: "100%",
+                alignItems: "center",
+            }}>
+            <Stack
+                sx={{
+                    marginTop: "100px",
+                    marginBottom: "100px",
+                    width: "90%",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                    gap: "30px"
+                }}>
+                <Typography
+                    variant="h3">
+                    Shopping Cart
+                </Typography>
+                <Stack>
+                    <CartItems />
+                </Stack>
+            </Stack>
+        </Stack>
     )
 }

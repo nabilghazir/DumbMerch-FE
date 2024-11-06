@@ -40,9 +40,28 @@ export const EditProductForm: React.FC<EditProductFormProps> = ({ product, handl
     });
 
     const onSubmit = async (data: CreateProductEntities) => {
-        await dispatch(updateProduct({ id: product.id, data }));
-        handleClose();
+        const formData = new FormData();
+        formData.append('name', data.name);
+        formData.append('desc', data.desc);
+        formData.append('stock', data.stock.toString());
+        formData.append('price', data.price.toString());
+        formData.append('categoryId', data.categoryId.toString());
+        formData.append('categoryName', data.categoryName);
+
+        if (data.productImages && data.productImages.length > 0) {
+            data.productImages.forEach((file) => {
+                formData.append('productImages', file);
+            });
+        }
+
+        try {
+            await dispatch(updateProduct({ id: product.id, data: formData }));
+            handleClose();
+        } catch (error) {
+            console.error("Error updating product:", error);
+        }
     };
+
 
     return (
         <form onSubmit={handleSubmit(onSubmit)}>

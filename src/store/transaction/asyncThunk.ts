@@ -1,20 +1,56 @@
-import { createAsyncThunk } from "@reduxjs/toolkit";
-import { api } from "../../libs/api";
-import { AxiosError } from "axios";
-import { toast } from "react-toastify";
+import { createAsyncThunk } from '@reduxjs/toolkit';
+import { api } from '../../libs/api';
+import { AxiosError } from 'axios';
+import { toast } from 'react-toastify';
+import { CreateTransactionDTO, TransactionDTO } from '../../entities/transaction-entities';
 
+export const createTransaction = createAsyncThunk(
+    'transactions/createTransaction',
+    async (transactionData: CreateTransactionDTO, ThunkAPI) => {
+        try {
+            const response = await api.post('/api/transactions/create', transactionData);
+            return response.data as TransactionDTO;
+        } catch (error) {
+            console.log(error);
+            if (error instanceof AxiosError && error.response) {
+                toast.error(error.response?.data.message);
+                return ThunkAPI.rejectWithValue(error.message);
+            } else {
+                const err = error as Error;
+                return ThunkAPI.rejectWithValue(err.message);
+            }
+        }
+    }
 
-export const getAllProduct = createAsyncThunk(
-    "product/getAllProduct",
+);
+
+export const getTransactionById = createAsyncThunk(
+    'transactions/getTransactionById',
+    async (transactionId: number, ThunkAPI) => {
+        try {
+            const response = await api.get(`/api/transactions/${transactionId}`);
+            return response.data as TransactionDTO;
+        } catch (error) {
+            console.log(error);
+            if (error instanceof AxiosError && error.response) {
+                toast.error(error.response?.data.message);
+                return ThunkAPI.rejectWithValue(error.message);
+            } else {
+                const err = error as Error;
+                return ThunkAPI.rejectWithValue(err.message);
+            }
+        }
+
+    }
+);
+
+export const getAllTransactionsForUser = createAsyncThunk(
+    'transactions/getAllTransactionsForUser',
     async (_, ThunkAPI) => {
         try {
-            const res = await api.get("/product/getallproduct")
-
-            console.log("Profile Data : ", res.data);
-
-            return res.data
+            const response = await api.get('/api/transactions/user/all');
+            return response.data as TransactionDTO[];
         } catch (error) {
-            console.log(error as Error);
             console.log(error);
             if (error instanceof AxiosError && error.response) {
                 toast.error(error.response?.data.message);
@@ -24,15 +60,19 @@ export const getAllProduct = createAsyncThunk(
                 return ThunkAPI.rejectWithValue(err.message);
             }
         }
-    }
-)
 
-export const createProduct = createAsyncThunk<void, FormData>(
-    "product/createProduct",
-    async (formData, ThunkAPI) => {
+    }
+);
+
+export const updateTransactionPayment = createAsyncThunk(
+    'transactions/updateTransactionPayment',
+    async (
+        { transactionId, paymentData }: { transactionId: number; paymentData: { paymentMethod: string; paymentUrl: string } },
+        ThunkAPI
+    ) => {
         try {
-            const res = await api.post("/product/create", formData);
-            return res.data; // Make sure this matches your API's return type
+            const response = await api.put(`/api/transactions/${transactionId}/payment`, paymentData);
+            return response.data;
         } catch (error) {
             console.log(error);
             if (error instanceof AxiosError && error.response) {
@@ -45,44 +85,3 @@ export const createProduct = createAsyncThunk<void, FormData>(
         }
     }
 );
-
-
-export const updateProduct = createAsyncThunk<void, { id: number; data: FormData }>(
-    "product/updateProduct",
-    async ({ id, data }, ThunkAPI) => {
-        try {
-            const res = await api.put(`/product/update/${id}`, data);
-            return res.data;
-        } catch (error) {
-            console.log(error);
-            if (error instanceof AxiosError && error.response) {
-                toast.error(error.response?.data.message);
-                return ThunkAPI.rejectWithValue(error.message);
-            } else {
-                const err = error as Error;
-                return ThunkAPI.rejectWithValue(err.message);
-            }
-        }
-    }
-);
-
-
-export const deleteProduct = createAsyncThunk<void, number>(
-    "product/deleteProduct",
-    async (id, ThunkAPI) => {
-        try {
-            const res = await api.delete(`/product/delete/${id}`);
-            console.log("Profile Data : ", res.data);
-
-        } catch (error) {
-            console.log(error);
-            if (error instanceof AxiosError && error.response) {
-                toast.error(error.response?.data.message);
-                return ThunkAPI.rejectWithValue(error.message);
-            } else {
-                const err = error as Error;
-                return ThunkAPI.rejectWithValue(err.message);
-            }
-        }
-    }
-)

@@ -13,7 +13,7 @@ interface CreateProductFormProps {
 export const CreateProductForm: React.FC<CreateProductFormProps> = ({ handleClose }) => {
     const dispatch = useAppDispatch();
     const loading = useAppSelector((state) => state.product.loading);
-    const { control, handleSubmit, reset } = useForm<CreateProductEntities>({
+    const { control, handleSubmit, reset, formState: { errors } } = useForm<CreateProductEntities>({
         resolver: zodResolver(productSchema),
         defaultValues: {
             name: '',
@@ -27,9 +27,32 @@ export const CreateProductForm: React.FC<CreateProductFormProps> = ({ handleClos
     });
 
     const onSubmit = async (data: CreateProductEntities) => {
-        await dispatch(createProduct(data));
-        handleClose();
-        reset();
+        console.log("Form data before submission:", data);
+
+        const formData = new FormData();
+        formData.append('name', data.name);
+        formData.append('desc', data.desc);
+        formData.append('stock', data.stock.toString());
+        formData.append('price', data.price.toString());
+        formData.append('categoryId', data.categoryId.toString());
+        formData.append('categoryName', data.categoryName);
+
+        if (data.productImages && data.productImages.length > 0) {
+            data.productImages.forEach((file) => {
+                formData.append('productImages', file);
+            });
+        }
+
+        try {
+            const response = await dispatch(createProduct(formData));
+            console.log("Response from dispatch:", response);
+            handleClose();
+            reset();
+            const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
+            fileInput.value = "";
+        } catch (error) {
+            console.error("Error during form submission:", error);
+        }
     };
 
     return (
@@ -38,8 +61,8 @@ export const CreateProductForm: React.FC<CreateProductFormProps> = ({ handleClos
                 <Controller
                     name="name"
                     control={control}
-                    render={({ field, fieldState }) => (
-                        <TextField {...field} label="Product Name" error={!!fieldState.error} helperText={fieldState.error?.message} />
+                    render={({ field }) => (
+                        <TextField {...field} label="Product Name" error={!!errors.name} helperText={errors.name?.message} />
                     )}
                 />
             </FormControl>
@@ -48,8 +71,8 @@ export const CreateProductForm: React.FC<CreateProductFormProps> = ({ handleClos
                 <Controller
                     name="desc"
                     control={control}
-                    render={({ field, fieldState }) => (
-                        <TextField {...field} label="Description" multiline rows={3} error={!!fieldState.error} helperText={fieldState.error?.message} />
+                    render={({ field }) => (
+                        <TextField {...field} label="Description" multiline rows={3} error={!!errors.desc} helperText={errors.desc?.message} />
                     )}
                 />
             </FormControl>
@@ -58,8 +81,15 @@ export const CreateProductForm: React.FC<CreateProductFormProps> = ({ handleClos
                 <Controller
                     name="stock"
                     control={control}
-                    render={({ field, fieldState }) => (
-                        <TextField {...field} label="Stock" type="number" error={!!fieldState.error} helperText={fieldState.error?.message} />
+                    render={({ field }) => (
+                        <TextField
+                            {...field}
+                            label="Stock"
+                            type="number"
+                            onChange={(e) => field.onChange(e.target.value ? parseInt(e.target.value, 10) : 0)}
+                            error={!!errors.stock}
+                            helperText={errors.stock?.message}
+                        />
                     )}
                 />
             </FormControl>
@@ -68,19 +98,25 @@ export const CreateProductForm: React.FC<CreateProductFormProps> = ({ handleClos
                 <Controller
                     name="price"
                     control={control}
-                    render={({ field, fieldState }) => (
-                        <TextField {...field} label="Price" type="number" error={!!fieldState.error} helperText={fieldState.error?.message} />
+                    render={({ field }) => (
+                        <TextField
+                            {...field}
+                            label="Price"
+                            type="number"
+                            onChange={(e) => field.onChange(e.target.value ? parseFloat(e.target.value) : 0)}
+                            error={!!errors.price}
+                            helperText={errors.price?.message}
+                        />
                     )}
                 />
             </FormControl>
-
 
             <FormControl fullWidth margin="normal">
                 <Controller
                     name="categoryName"
                     control={control}
-                    render={({ field, fieldState }) => (
-                        <TextField {...field} label="Category Name" error={!!fieldState.error} helperText={fieldState.error?.message} />
+                    render={({ field }) => (
+                        <TextField {...field} label="Category Name" error={!!errors.categoryName} helperText={errors.categoryName?.message} />
                     )}
                 />
             </FormControl>
@@ -97,14 +133,18 @@ export const CreateProductForm: React.FC<CreateProductFormProps> = ({ handleClos
                             <Input
                                 type="file"
                                 inputProps={{ multiple: true }}
-                                onChange={(e) => field.onChange((e.target as HTMLInputElement).files)}
+                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                                    const files = e.target.files;
+                                    if (files) {
+                                        field.onChange(Array.from(files)); // Convert FileList to Array
+                                    }
+                                }}
                                 fullWidth
                             />
                         </>
                     )}
                 />
             </FormControl>
-
 
             <Button type="submit" variant="contained" color="primary" fullWidth disabled={loading}>
                 {loading ? <CircularProgress size={24} /> : "Create Product"}

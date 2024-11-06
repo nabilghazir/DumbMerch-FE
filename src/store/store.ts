@@ -1,29 +1,46 @@
-import { configureStore } from "@reduxjs/toolkit";
-import { useDispatch, useSelector } from "react-redux";
-
+import { combineReducers } from "redux";
+import { configureStore, ThunkAction, Action } from "@reduxjs/toolkit";
+import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 import authReducer from "./auth/auth-slice";
-import profileReducer from "./profile/profile-slice"
-import categoryReducer from "./category/category-slice"
-import productReducer from "./product/product-slice"
-import cartReducer from "./cart/cart-slice"
+import profileReducer from "./profile/profile-slice";
+import categoryReducer from "./category/category-slice";
+import productReducer from "./product/product-slice";
+import cartReducer from "./cart/cart-slice";
+import { persistStore, persistReducer } from "redux-persist";
+import storage from "redux-persist/lib/storage";
 
+const rootReducer = combineReducers({
+    auth: authReducer,
+    profile: profileReducer,
+    category: categoryReducer,
+    product: productReducer,
+    cart: cartReducer,
+});
 
+const persistConfig = {
+    key: "root",
+    storage,
+};
+
+const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 const store = configureStore({
-    reducer: {
-        auth: authReducer,
-        profile: profileReducer,
-        category: categoryReducer,
-        product: productReducer,
-        cart: cartReducer,
-    },
+    reducer: persistedReducer,
 });
+
+const persistor = persistStore(store);
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
+export type AppThunk<ReturnType = void> = ThunkAction<
+    ReturnType,
+    RootState,
+    unknown,
+    Action<string>
+>;
 
+export const useAppDispatch = () => useDispatch<AppDispatch>();
+export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
 
-export const useAppDispatch = useDispatch.withTypes<AppDispatch>();
-export const useAppSelector = useSelector.withTypes<RootState>();
-
+export { persistor };
 export default store;

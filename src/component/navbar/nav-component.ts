@@ -3,10 +3,6 @@ export const NavComponentMember = [{
     name: "Product",
 },
 {
-    path: "/cart",
-    name: "Cart"
-},
-{
     path: "/complain",
     name: "Complain"
 },

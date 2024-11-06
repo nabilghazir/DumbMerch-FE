@@ -3,24 +3,36 @@ import { AuthLeft } from "../layout/auth/auth-left";
 import { Navigate, Outlet } from "react-router-dom";
 import { useAppSelector } from "../store/store";
 import { jwtDecode } from "jwt-decode";
+import { useEffect, useState } from "react";
 
 interface DecodedToken {
     role: string;
 }
 
-export const Auth = () => {
+export const Auth: React.FC = () => {
     const authState = useAppSelector((state) => state.auth);
-    let role: string | undefined;
+    const [role, setRole] = useState<string | undefined>(undefined);
 
-    if (authState.token) {
-        const decoded = jwtDecode<DecodedToken>(authState.token);
-        role = decoded.role;
-    }
+    useEffect(() => {
+        if (authState.token) {
+            try {
+                const decoded = jwtDecode<DecodedToken>(authState.token);
+                setRole(decoded.role);
+            } catch (error) {
+                console.error("Token decoding failed:", error);
+                setRole(undefined);
+            }
+        } else {
+            setRole(undefined); // Clear role if no token
+        }
+    }, [authState.token]);
+
+    console.log("Current authState.token:", authState.token);
 
     if (role === "ADMIN") {
         return <Navigate to="/dashboard" replace />;
     }
-    if (role) {
+    if (role === "MEMBER") {
         return <Navigate to="/product" replace />;
     }
 

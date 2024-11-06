@@ -2,7 +2,9 @@ export interface CartItemEntity {
     productId: number;
     name: string;
     price: number;
+    stock: number;
     quantity: number;
+    image: string;
 }
 
 export interface CartEntity {
@@ -24,6 +26,15 @@ export interface CartProductEntity {
     productId: number;
     quantity: number;
 }
+
+export interface CartItemProps {
+    productId: number;
+    name: string;
+    price: number;
+    quantity: number;
+    image: string;
+}
+
 
 export interface OrderEntity {
     id: number;

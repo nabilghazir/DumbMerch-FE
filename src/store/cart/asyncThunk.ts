@@ -10,6 +10,8 @@ export const fetchCart = createAsyncThunk<CartEntity, number>(
     async (userId, ThunkAPI) => {
         try {
             const response = await api.get(`/api/cart/user/${userId}`);
+            console.log(response.data);
+
             return response.data;
         } catch (error) {
             console.log(error);
@@ -28,7 +30,7 @@ export const addProductToCart = createAsyncThunk<CartEntity, AddProductToCartDTO
     'cart/addProductToCart',
     async (productData, ThunkAPI) => {
         try {
-            const response = await api.post(`/api/cart/add`, productData);
+            const response = await api.post(`/cart/add-product`, productData);
             return response.data;
         } catch (error) {
             console.log(error);
@@ -47,7 +49,7 @@ export const updateProductQuantity = createAsyncThunk<CartEntity, UpdateProductQ
     'cart/updateProductQuantity',
     async (updateData, ThunkAPI) => {
         try {
-            const response = await api.put(`/api/cart/update`, updateData);
+            const response = await api.put(`/cart/update-quantity`, updateData);
             return response.data;
         } catch (error) {
             console.log(error);

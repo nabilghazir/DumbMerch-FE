@@ -16,6 +16,8 @@ import { Dashboard } from '../layout/admin/dashboard'
 import { AdminComplain } from '../layout/admin/admin-complain'
 import { AdminCategory } from '../layout/admin/admin-category'
 import { AdminProduct } from '../layout/admin/admin-product'
+import { Transaction } from '../layout/base/transaction'
+import { AdminTransactions } from '../layout/admin/admin-transactions'
 
 export const Routes = () => {
     const router = createBrowserRouter([
@@ -55,12 +57,16 @@ export const Routes = () => {
                     element: <Profile />
                 },
                 {
-                    path: "/cart",
+                    path: "/cart/:cartId",
                     element: <Cart />
                 },
                 {
                     path: "/complain",
                     element: <Complain />
+                },
+                {
+                    path: "/transaction/:transactionId",
+                    element: <Transaction />
                 }
             ]
         },
@@ -70,6 +76,10 @@ export const Routes = () => {
                 {
                     path: "/dashboard",
                     element: <Dashboard />
+                },
+                {
+                    path: "/admin-transactions",
+                    element: <AdminTransactions />
                 },
                 {
                     path: "/admin-complain",

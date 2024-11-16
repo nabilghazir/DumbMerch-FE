@@ -1,18 +1,19 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Typography, TableRow, TableCell, TextField, IconButton, Stack } from "@mui/material";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../store/store";
 import { CartItemProps } from "../../entities/cart-entities";
 import { updateProductQuantity } from "../../store/cart/asyncThunk";
 import { Icon } from "@iconify/react/dist/iconify.js";
+import customTheme from "../../theme/theme";
 
 interface CartItemComponentProps {
     item: CartItemProps;
-    cartId: number;
-    index: number; // Ensure this is included
+    id: number;
+    index: number;
 }
 
-export const CartItem: React.FC<CartItemComponentProps> = ({ item, cartId, index }) => {
+export const CartItem: React.FC<CartItemComponentProps> = ({ item, id, index }) => {
     const dispatch = useDispatch<AppDispatch>();
     const [quantity, setQuantity] = useState(item.quantity);
     const totalItemPrice = item.price * quantity;
@@ -29,14 +30,14 @@ export const CartItem: React.FC<CartItemComponentProps> = ({ item, cartId, index
 
         setQuantity(newQuantity);
         if (newQuantity > 0) {
-            dispatch(updateProductQuantity({ cartId, productId: item.productId, quantity: newQuantity }));
+            dispatch(updateProductQuantity({ id, productId: item.productId, quantity: newQuantity }));
         }
     };
 
     const incrementQuantity = () => {
         const newQuantity = quantity + 1;
         setQuantity(newQuantity);
-        dispatch(updateProductQuantity({ cartId, productId: item.productId, quantity: newQuantity }));
+        dispatch(updateProductQuantity({ id, productId: item.productId, quantity: newQuantity }));
     };
 
     const decrementQuantity = () => {
@@ -44,9 +45,13 @@ export const CartItem: React.FC<CartItemComponentProps> = ({ item, cartId, index
         setQuantity(newQuantity);
 
         if (newQuantity > 0) {
-            dispatch(updateProductQuantity({ cartId, productId: item.productId, quantity: newQuantity }));
+            dispatch(updateProductQuantity({ id, productId: item.productId, quantity: newQuantity }));
         }
     };
+
+    useEffect(() => {
+        setQuantity(item.quantity);
+    }, [item.quantity, dispatch]);
 
     return (
         <TableRow>
@@ -65,7 +70,11 @@ export const CartItem: React.FC<CartItemComponentProps> = ({ item, cartId, index
             <TableCell>
                 <Stack direction="row" alignItems="center" spacing={1}>
                     <IconButton onClick={decrementQuantity} aria-label="decrement">
-                        <Icon icon="material-symbols:remove-rounded" />
+                        <Icon
+                            icon="material-symbols:remove-rounded"
+                            style={{
+                                color: customTheme.palette.common.white
+                            }} />
                     </IconButton>
                     <TextField
                         type="text"
@@ -74,10 +83,17 @@ export const CartItem: React.FC<CartItemComponentProps> = ({ item, cartId, index
                         onChange={handleQuantityChange}
                         inputProps={{ min: 0, style: { textAlign: "center" } }}
                         size="small"
-                        sx={{ width: "60px" }}
+                        sx={{
+                            width: "60px",
+                            borderColor: customTheme.palette.common.white
+                        }}
                     />
                     <IconButton onClick={incrementQuantity} aria-label="increment">
-                        <Icon icon="material-symbols:add-2-rounded" />
+                        <Icon
+                            icon="material-symbols:add-2-rounded"
+                            style={{
+                                color: customTheme.palette.common.white
+                            }} />
                     </IconButton>
                 </Stack>
             </TableCell>

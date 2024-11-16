@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { CartEntity } from "../../entities/cart-entities";
-import { fetchCart, addProductToCart, updateProductQuantity, clearCart } from "./asyncThunk";
+import { fetchCart, addProductToCart, updateProductQuantity, clearCart as clearCartThunk } from "./asyncThunk";
 
 interface CartState {
     cart: CartEntity | null;
@@ -20,6 +20,10 @@ const cartSlice = createSlice({
     reducers: {
         resetCart: (state) => {
             state.cart = null;
+            state.error = null;
+        },
+        clearCart: (state) => {
+            state.cart = null; // Directly clearing the cart in the state
             state.error = null;
         },
     },
@@ -62,20 +66,20 @@ const cartSlice = createSlice({
             state.error = action.payload as string;
         });
 
-        builder.addCase(clearCart.pending, (state) => {
+        builder.addCase(clearCartThunk.pending, (state) => {
             state.loading = true;
         });
-        builder.addCase(clearCart.fulfilled, (state, action: PayloadAction<CartEntity>) => {
-            state.cart = action.payload;
+        builder.addCase(clearCartThunk.fulfilled, (state) => {
+            state.cart = null; // Clear cart when action is fulfilled
             state.loading = false;
         });
-        builder.addCase(clearCart.rejected, (state, action) => {
+        builder.addCase(clearCartThunk.rejected, (state, action) => {
             state.loading = false;
             state.error = action.payload as string;
         });
     },
 });
 
-export const { resetCart } = cartSlice.actions;
+export const { resetCart, clearCart } = cartSlice.actions;
 
 export default cartSlice.reducer;

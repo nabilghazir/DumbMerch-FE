@@ -1,7 +1,21 @@
-import { Stack, Typography } from "@mui/material"
-import { CartItems } from "../../component/cart/cart-items"
+import { Button, Stack, Typography } from "@mui/material";
+import { CartItems } from "../../component/cart/cart-items";
+import { useEffect } from "react";
+import { useAppDispatch, useAppSelector } from "../../store/store";
+import { fetchCart } from "../../store/cart/asyncThunk";
 
 export const Cart = () => {
+    const dispatch = useAppDispatch();
+    const cartState = useAppSelector((state) => state.cart.cart);
+
+
+
+    useEffect(() => {
+        if (cartState?.userId) {
+            dispatch(fetchCart());
+        }
+    }, [dispatch, cartState?.userId]);
+
     return (
         <Stack
             sx={{
@@ -18,14 +32,16 @@ export const Cart = () => {
                     justifyContent: "center",
                     gap: "30px"
                 }}>
-                <Typography
-                    variant="h3">
+                <Typography variant="h3">
                     Shopping Cart
                 </Typography>
                 <Stack>
                     <CartItems />
                 </Stack>
+
+                <Button>
+                </Button>
             </Stack>
         </Stack>
-    )
-}
+    );
+};

@@ -37,7 +37,7 @@ export const NavList = () => {
 
     useEffect(() => {
         if (authState.user?.id) {
-            dispatch(fetchCart(authState.user?.id));
+            dispatch(fetchCart());
         }
     }, [authState.user?.id, dispatch]);
     return (
@@ -48,7 +48,7 @@ export const NavList = () => {
             }}
         >
             {role === Role.MEMBER && (
-                <Link to="/cart"
+                <Link to={`/cart/${cartState?.id}`}
                     style={{
                         textDecoration: "none",
                         color: customTheme.palette.common.white,

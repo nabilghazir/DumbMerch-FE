@@ -3,7 +3,11 @@ export interface ProductDTO {
     name: string;
     price: number;
     description?: string;
-    images?: string[];
+    productImages?: ProductImages[];
+}
+
+export interface ProductImages {
+    url?: string;
 }
 
 export interface CartItemDTO {
@@ -37,11 +41,7 @@ export interface TransactionDTO {
 }
 
 export interface CreateTransactionDTO {
-    userId: number;
-    cartId: number;
     shipTo?: string | null;
-    totalAmount: number;
-    status: TransactionStatus;
 }
 
 

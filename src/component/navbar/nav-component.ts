@@ -33,6 +33,10 @@ export const NavComponentAdmin = [
         name: "Complain",
     },
     {
+        path: "/admin-transactions",
+        name: "Transactions",
+    },
+    {
         path: "/admin-category",
         name: "Category",
     },

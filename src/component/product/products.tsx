@@ -30,8 +30,6 @@ export const Products = () => {
         fetchProducts()
     }, [categoryName])
 
-    console.log(products);
-
 
     return (
         <Box>

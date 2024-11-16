@@ -1,4 +1,5 @@
 export interface CartItemEntity {
+    id: number;
     productId: number;
     name: string;
     price: number;
@@ -8,7 +9,7 @@ export interface CartItemEntity {
 }
 
 export interface CartEntity {
-    cartId: number;
+    id: number;
     userId: number;
     items: CartItemEntity[];
     totalPrice: number;
@@ -28,6 +29,7 @@ export interface CartProductEntity {
 }
 
 export interface CartItemProps {
+    id: number;
     productId: number;
     name: string;
     price: number;

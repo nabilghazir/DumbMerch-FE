@@ -5,13 +5,11 @@ import { AddProductToCartDTO, UpdateProductQuantityDTO } from "../../entities/ca
 import { AxiosError } from "axios";
 import { toast } from "react-toastify";
 
-export const fetchCart = createAsyncThunk<CartEntity, number>(
+export const fetchCart = createAsyncThunk<CartEntity>(
     'cart/fetchCart',
-    async (userId, ThunkAPI) => {
+    async (_, ThunkAPI) => {
         try {
-            const response = await api.get(`/api/cart/user/${userId}`);
-            console.log(response.data);
-
+            const response = await api.get("/cart/get-cart");
             return response.data;
         } catch (error) {
             console.log(error);
@@ -68,7 +66,7 @@ export const clearCart = createAsyncThunk<CartEntity, number>(
     'cart/clearCart',
     async (cartId, ThunkAPI) => {
         try {
-            const response = await api.delete(`/api/cart/clear/${cartId}`);
+            const response = await api.delete(`/cart/clear/${cartId}`);
             return response.data;
         } catch (error) {
             console.log(error);
